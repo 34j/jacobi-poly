@@ -47,8 +47,8 @@ _numba_args = (
     ],
     "(),(),(),(n)",
 )
-_jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True)
-_jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")
+_jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True)(_jacobi)
+_jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
 
 
 def jacobi(
@@ -83,7 +83,7 @@ def jacobi(
     xp = array_namespace(x, alpha, beta)
     shape = xpx.broadcast_shapes(x.shape, alpha.shape, beta.shape)
     out = xp.empty((n_end, *shape), dtype=x.dtype, device=x.device)
-    _jacobi(x, alpha, beta, out)
+    _jacobi_parallel(x, alpha, beta, out)
     out = xp.from_dlpack(asdlpack(out))
     return out
 
