@@ -6,7 +6,8 @@ import numpy as np
 from array_api._2024_12 import Array
 from array_api_compat import array_namespace
 from dlpack import asdlpack
-from numba import complex64, complex128, float32, float64
+from numba import float32, float64
+from numba.cuda import as_cuda_array
 
 from ._lgamma import binom, lgamma
 
@@ -16,6 +17,7 @@ def _jacobi(
     alpha: Any,
     beta: Any,
     out: np.ndarray[tuple[int], np.dtype[np.floating[Any]]],
+    _: Any,
     /,
 ) -> None:
     # Compute the first two polynomials
@@ -40,12 +42,12 @@ def _jacobi(
 
 _numba_args = (
     [
-        (float32, float32, float32, float32[:]),
-        (float64, float64, float64, float64[:]),
-        (complex64, complex64, complex64, complex64[:]),
-        (complex128, complex128, complex128, complex128[:]),
+        (float32, float32, float32, float32[:], float32),
+        (float64, float64, float64, float64[:], float64),
+        # (complex64, complex64, complex64, complex64[:]),
+        # (complex128, complex128, complex128, complex128[:]),
     ],
-    "(),(),(),(n)",
+    "(),(),(),(n)->()",
 )
 _jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True)(_jacobi)
 _jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
@@ -61,7 +63,7 @@ def jacobi(
     """
     Computes the Jacobi polynomials of order {0, ..., n_end - 1} at the points x.
 
-    (...) -> (n_end, ...)
+    (...) -> (..., n_end)
 
     Parameters
     ----------
@@ -82,8 +84,15 @@ def jacobi(
     """
     xp = array_namespace(x, alpha, beta)
     shape = xpx.broadcast_shapes(x.shape, alpha.shape, beta.shape)
-    out = xp.empty((n_end, *shape), dtype=x.dtype, device=x.device)
-    _jacobi_parallel(x, alpha, beta, out)
+    out = xp.empty((*shape, n_end), dtype=x.dtype, device=x.device)
+    if "cuda" in str(x.device):
+        x = as_cuda_array(x)
+        alpha = as_cuda_array(alpha)
+        beta = as_cuda_array(beta)
+        out = as_cuda_array(out)
+        _jacobi_cuda(x, alpha, beta, out)
+    else:
+        _jacobi_parallel(x, alpha, beta, out)
     out = xp.from_dlpack(asdlpack(out))
     return out
 
@@ -140,7 +149,7 @@ def gegenbauer(x: Array, *, alpha: Array, n_end: int) -> Array:
     """
     Computes the Gegenbauer polynomials of order {0, ..., n_end - 1} at the points x.
 
-    (...) -> (n_end, ...)
+    (...) -> (..., n_end)
 
     Parameters
     ----------
@@ -159,9 +168,9 @@ def gegenbauer(x: Array, *, alpha: Array, n_end: int) -> Array:
     """
     xp = array_namespace(x, alpha)
     x, alpha = xp.broadcast_arrays(x, alpha)
-    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(slice(None),) + (None,) * x.ndim]
+    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
     alpha = xp.asarray(alpha - 1 / 2, dtype=x.dtype, device=x.device)
-    alpha_ = alpha[None, ...]
+    alpha_ = alpha[..., None]
     log_coef = xp.astype(
         lgamma(2.0 * alpha_ + 1.0 + n)
         - lgamma(2.0 * alpha_ + 1.0)
@@ -177,7 +186,7 @@ def legendre(x: Array, *, ndim: Array, n_end: int) -> Array:
 
     The shape of x should be broadcastable to a common shape.
 
-    (...) -> (n_end, ...)
+    (...) -> (..., n_end)
 
     Parameters
     ----------
@@ -198,11 +207,11 @@ def legendre(x: Array, *, ndim: Array, n_end: int) -> Array:
     # beta=xp.asarray((ndim-3)/2), n_end=n_end)
     xp = array_namespace(x, ndim)
     x, ndim = xp.broadcast_arrays(x, ndim)
-    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(slice(None),) + (None,) * x.ndim]
+    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
     return xp.where(
-        ndim[None, ...] == 2,
+        ndim[..., None] == 2,
         # Chebyshev polynomials of the first kind
-        xp.cos(n * xp.acos(x)[None, ...]),
+        xp.cos(n * xp.acos(x)[..., None]),
         gegenbauer(x, alpha=(ndim - 2) / 2, n_end=n_end)
-        / binom(n + ndim[None, ...] - 3, ndim[None, ...] - 3),
+        / binom(n + ndim[..., None] - 3, ndim[..., None] - 3),
     )

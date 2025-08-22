@@ -1,6 +1,7 @@
 import array_api_extra as xpx
 import pytest
 from array_api._2024_12 import ArrayNamespaceFull
+from array_api_compat import to_device
 from scipy.special import eval_jacobi, roots_jacobi
 
 from jacobi_poly import jacobi_triplet_integral
@@ -24,7 +25,15 @@ def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) ->
 
         # expected
         x, w = roots_jacobi(24, float(xp.sum(alpha)) / 2, float(xp.sum(beta)) / 2)
-        js = [eval_jacobi(n[i], alpha[i], beta[i], x) for i in range(3)]
+        js = [
+            eval_jacobi(
+                to_device(n[i], "cpu"),
+                to_device(alpha[i], "cpu"),
+                to_device(beta[i], "cpu"),
+                to_device(x, "cpu"),
+            )
+            for i in range(3)
+        ]
         expected.append(xp.sum(js[0] * js[1] * js[2] * w, axis=-1))
     expected = xp.stack(expected, axis=-1)
 
@@ -41,4 +50,5 @@ def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) ->
         n3=ns[2, ...],
         normalized=False,
     )
+    expected = xp.astype(expected, actual.dtype, device=actual.device)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))

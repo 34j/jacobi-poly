@@ -114,9 +114,8 @@ def jacobi_triplet_integral(
     ]
     phase = minus_1_power(-Ls2[0] + Ls2[1] - betas[2, ...])
     coef = phase / np.sqrt(2) * xp.exp(xp.sum(xp.stack(logcoefs), axis=0))
-    return (
-        coef
-        * wigner3j(
+    return coef * xp.asarray(
+        wigner3j(
             Ls2[0, ...],
             Ls2[1, ...],
             Ls2[2, ...],
@@ -133,5 +132,7 @@ def jacobi_triplet_integral(
             Ns2[1, ...],
             -Ns2[2, ...],
             ignore_invalid=True,
-        )
+        ),
+        device=coef.device,
+        dtype=coef.dtype,
     )
