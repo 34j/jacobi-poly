@@ -6,7 +6,7 @@ from array_api._2024_12 import ArrayNamespaceFull
 from array_api_compat import to_device
 from scipy.special import eval_gegenbauer, eval_jacobi
 
-from jacobi_poly import binom, gegenbauer, jacobi, legendre
+from jacobi_poly import binom, gegenbauer_all, jacobi_all, legendre_all
 
 
 @pytest.mark.parametrize(
@@ -30,7 +30,7 @@ def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> N
         to_device(x[..., None], "cpu"),
     )
     expected = xp.astype(expected, x.dtype, device=x.device)
-    actual = jacobi(x, alpha=alpha, beta=beta, n_end=n_end)
+    actual = jacobi_all(x, alpha=alpha, beta=beta, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
 
@@ -51,7 +51,7 @@ def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) 
         to_device(n, "cpu"), to_device(alpha[..., None], "cpu"), to_device(x[..., None], "cpu")
     )
     expected = xp.astype(expected, x.dtype, device=x.device)
-    actual = gegenbauer(x, alpha=alpha, n_end=n_end)
+    actual = gegenbauer_all(x, alpha=alpha, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
 
@@ -76,9 +76,11 @@ def test_legendre(
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
     n = xp.arange(n_end)[(None,) * x.ndim + (slice(None),)]
     if type == "jacobi":
-        expected = jacobi(x, alpha=alpha, beta=alpha, n_end=n_end) / binom(n + alpha[..., None], n)
+        expected = jacobi_all(x, alpha=alpha, beta=alpha, n_end=n_end) / binom(
+            n + alpha[..., None], n
+        )
     elif type == "gegenbauer":
-        expected = gegenbauer(x, alpha=alpha + 1 / 2, n_end=n_end) / binom(
+        expected = gegenbauer_all(x, alpha=alpha + 1 / 2, n_end=n_end) / binom(
             n + 2 * alpha[..., None],
             n,
             # n + d[..., None] - 3, d[..., None] - 3
@@ -86,5 +88,5 @@ def test_legendre(
     else:
         raise ValueError(f"Invalid type {type}")
     expected = xp.astype(expected, x.dtype, device=x.device)
-    actual = legendre(x, ndim=xp.asarray(d), n_end=n_end)
+    actual = legendre_all(x, ndim=xp.asarray(d), n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))

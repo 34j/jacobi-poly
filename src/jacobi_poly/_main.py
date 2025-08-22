@@ -53,7 +53,7 @@ _jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=T
 _jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
 
 
-def jacobi(
+def jacobi_all(
     x: Array,
     *,
     alpha: Array,
@@ -145,7 +145,7 @@ def jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) -> Arr
     return xp.exp(log_jacobi_normalization_constant(alpha=alpha, beta=beta, n=n))
 
 
-def gegenbauer(x: Array, *, alpha: Array, n_end: int) -> Array:
+def gegenbauer_all(x: Array, *, alpha: Array, n_end: int) -> Array:
     """
     Computes the Gegenbauer polynomials of order {0, ..., n_end - 1} at the points x.
 
@@ -177,10 +177,10 @@ def gegenbauer(x: Array, *, alpha: Array, n_end: int) -> Array:
         - (lgamma(alpha_ + 1.0 + n) - lgamma(alpha_ + 1.0)),
         x.dtype,
     )
-    return xp.exp(log_coef) * jacobi(x, alpha=alpha, beta=alpha, n_end=n_end)
+    return xp.exp(log_coef) * jacobi_all(x, alpha=alpha, beta=alpha, n_end=n_end)
 
 
-def legendre(x: Array, *, ndim: Array, n_end: int) -> Array:
+def legendre_all(x: Array, *, ndim: Array, n_end: int) -> Array:
     """
     Computes the generalized Legendre polynomials of order {0, ..., n_end - 1} at the points x.
 
@@ -212,6 +212,6 @@ def legendre(x: Array, *, ndim: Array, n_end: int) -> Array:
         ndim[..., None] == 2,
         # Chebyshev polynomials of the first kind
         xp.cos(n * xp.acos(x)[..., None]),
-        gegenbauer(x, alpha=(ndim - 2) / 2, n_end=n_end)
+        gegenbauer_all(x, alpha=(ndim - 2) / 2, n_end=n_end)
         / binom(n + ndim[..., None] - 3, ndim[..., None] - 3),
     )
