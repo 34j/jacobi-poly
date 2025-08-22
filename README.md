@@ -62,17 +62,17 @@ alpha = torch.asarray(2.0)
 beta = torch.asarray(3.0)
 n_end = 4  # from order 0 to order 3
 
-# Jacobi polynomial
+# Jacobi polynomial from order 0 to 3
 jacobi = jacobi_all(x, alpha=alpha, beta=beta, n_end=n_end)
 print(jacobi)
 # tensor([ 1.,  3.,  6., 10.], device='cuda:0')
 
-# Gegenbauer polynomial
+# Gegenbauer polynomial from order 0 to 3
 gegenbauer = gegenbauer_all(x, alpha=alpha, n_end=n_end)
 print(gegenbauer)
 # tensor([ 1.0000,  4.0000, 10.0000, 20.0000], device='cuda:0')
 
-# Generalized Legendre polynomial
+# Generalized Legendre polynomial from order 0 to 3
 # If ndim == 3, same as Legendre polynomial
 legendre = legendre_all(x, n_end=n_end, ndim=3)
 print(legendre)
