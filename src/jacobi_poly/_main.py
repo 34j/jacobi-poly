@@ -8,6 +8,7 @@ from array_api_compat import array_namespace
 from dlpack import asdlpack
 from numba import float32, float64
 from numba.cuda import as_cuda_array
+from numba.cuda.cudadrv.error import CudaSupportError
 
 from ._lgamma import binom, lgamma
 
@@ -50,7 +51,17 @@ _numba_args = (
     "(),(),(),(n)->()",
 )
 _jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True)(_jacobi)
-_jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
+
+try:
+    _jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
+except CudaSupportError:
+    # warnings.warn(
+    #     "Numba CUDA support is not available. "
+    #     "Falling back to array API implementation.",
+    #     UserWarning,
+    #     stacklevel=2,
+    # )
+    _jacobi_cuda = _jacobi
 
 
 def jacobi_all(
