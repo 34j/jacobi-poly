@@ -21,7 +21,9 @@ from jacobi_poly import binom, gegenbauer_all, jacobi_all, legendre_all
 def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> None:
     alpha = xp.random.random_uniform(low=0, high=5, shape=shape)
     beta = xp.random.random_uniform(low=0, high=5, shape=shape)
-    x = xp.random.random_uniform(low=0, high=1, shape=shape)
+    x = xp.random.random_uniform(low=0, high=1, shape=shape) + 1j * xp.random.random_uniform(
+        low=0, high=1, shape=shape
+    )
     n = xp.arange(n_end)[(None,) * x.ndim + (slice(None),)]
     expected = eval_jacobi(
         to_device(n, "cpu"),

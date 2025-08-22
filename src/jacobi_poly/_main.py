@@ -5,7 +5,7 @@ import numba
 import numpy as np
 from array_api._2024_12 import Array
 from array_api_compat import array_namespace
-from numba import float32, float64
+from numba import complex64, complex128, float32, float64
 from numba.cuda import as_cuda_array
 from numba.cuda.cudadrv.error import CudaSupportError
 
@@ -44,12 +44,18 @@ _numba_args = (
     [
         (float32, float32, float32, float32[:], float32),
         (float64, float64, float64, float64[:], float64),
-        # (complex64, complex64, complex64, complex64[:]),
-        # (complex128, complex128, complex128, complex128[:]),
+        (complex64, float32, float32, complex64[:], complex64),
+        (complex128, float64, float64, complex128[:], complex128),
+        (float32, complex64, complex64, complex64[:], complex64),
+        (float64, complex128, complex128, complex128[:], complex128),
+        (complex64, complex64, complex64, complex64[:], complex64),
+        (complex128, complex128, complex128, complex128[:], complex128),
     ],
     "(),(),(),(n)->()",
 )
-_jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True)(_jacobi)
+_jacobi_parallel = numba.guvectorize(*_numba_args, target="parallel", fastmath=True, cache=True)(
+    _jacobi
+)
 
 try:
     _jacobi_cuda = numba.guvectorize(*_numba_args, target="cuda")(_jacobi)
