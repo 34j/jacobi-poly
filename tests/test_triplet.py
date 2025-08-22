@@ -9,14 +9,14 @@ from jacobi_poly import jacobi_triplet_integral
 @pytest.mark.parametrize("alpha_eq_beta", [True, False])
 def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) -> None:
     n_samples = 20
-    alphas = xp.random.randint(0, 5, shape=(3, n_samples))
+    alphas = xp.random.integers(0, 5, shape=(3, n_samples))
     alphas[2, ...] = alphas[0, ...] + alphas[1, ...]
-    betas = xp.random.randint(0, 5, shape=(3, n_samples))
+    betas = xp.random.integers(0, 5, shape=(3, n_samples))
     betas[2, ...] = betas[0, ...] + betas[1, ...]
     if alpha_eq_beta:
         betas = alphas
 
-    ns = xp.random.randint(0, 5, shape=(3, n_samples))
+    ns = xp.random.integers(0, 5, shape=(3, n_samples))
 
     expected = []
     for sample in range(n_samples):

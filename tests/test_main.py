@@ -22,14 +22,14 @@ def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> N
     beta = xp.random.random_uniform(low=0, high=5, shape=shape)
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
     n = xp.arange(n_end)[
-        (None,) * len(shape)
-        + (
+        (
             slice(
                 None,
             ),
         )
+        + (None,) * len(shape)
     ]
-    expected = eval_jacobi(n, alpha[..., None], beta[..., None], x[..., None])
+    expected = eval_jacobi(n, alpha[None, ...], beta[None, ...], x[None, ...])
     actual = jacobi(x, alpha=alpha, beta=beta, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
@@ -47,14 +47,14 @@ def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) 
     alpha = xp.random.random_uniform(low=0, high=5, shape=shape)
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
     n = xp.arange(n_end)[
-        (None,) * len(shape)
-        + (
+        (
             slice(
                 None,
             ),
         )
+        + (None,) * len(shape)
     ]
-    expected = eval_gegenbauer(n, alpha[..., None], x[..., None])
+    expected = eval_gegenbauer(n, alpha[None, ...], x[None, ...])
     actual = gegenbauer(x, alpha=alpha, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
@@ -75,22 +75,22 @@ def test_legendre(
     type: Literal["gegenbauer", "jacobi"],
     xp: ArrayNamespaceFull,
 ) -> None:
-    d = xp.random.randint(3, 8, shape=shape)
+    d = xp.random.integers(3, 8, shape=shape)
     alpha = (d - 3) / 2
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
     n = xp.arange(n_end)[
-        (None,) * len(shape)
-        + (
+        (
             slice(
                 None,
             ),
         )
+        + (None,) * len(shape)
     ]
     if type == "jacobi":
-        expected = jacobi(x, alpha=alpha, beta=alpha, n_end=n_end) / binom(n + alpha[..., None], n)
+        expected = jacobi(x, alpha=alpha, beta=alpha, n_end=n_end) / binom(n + alpha[None, ...], n)
     elif type == "gegenbauer":
         expected = gegenbauer(x, alpha=alpha + 1 / 2, n_end=n_end) / binom(
-            n + 2 * alpha[..., None],
+            n + 2 * alpha[None, ...],
             n,
             # n + d[..., None] - 3, d[..., None] - 3
         )
