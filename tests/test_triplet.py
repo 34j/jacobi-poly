@@ -4,14 +4,11 @@ from array_api._2024_12 import ArrayNamespaceFull
 from array_api_compat import to_device
 from scipy.special import eval_jacobi, roots_jacobi
 
+from jacobi_poly import jacobi_triplet_integral
+
 
 @pytest.mark.parametrize("alpha_eq_beta", [True, False])
 def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) -> None:
-    try:
-        from jacobi_poly import jacobi_triplet_integral
-    except ImportError:
-        pytest.skip("py3nj is not installed")
-
     n_samples = 20
     alphas = xp.random.integers(0, 5, shape=(3, n_samples))
     alphas[2, ...] = alphas[0, ...] + alphas[1, ...]
@@ -41,17 +38,21 @@ def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) ->
     expected = xp.stack(expected, axis=-1)
 
     # actual
-    actual = jacobi_triplet_integral(
-        alpha1=alphas[0, ...],
-        alpha2=alphas[1, ...],
-        alpha3=alphas[2, ...],
-        beta1=betas[0, ...],
-        beta2=betas[1, ...],
-        beta3=betas[2, ...],
-        n1=ns[0, ...],
-        n2=ns[1, ...],
-        n3=ns[2, ...],
-        normalized=False,
-    )
+    try:
+        actual = jacobi_triplet_integral(
+            alpha1=alphas[0, ...],
+            alpha2=alphas[1, ...],
+            alpha3=alphas[2, ...],
+            beta1=betas[0, ...],
+            beta2=betas[1, ...],
+            beta3=betas[2, ...],
+            n1=ns[0, ...],
+            n2=ns[1, ...],
+            n3=ns[2, ...],
+            normalized=False,
+        )
+    except ImportError:
+        pytest.skip("py3nj is not installed")
+        return
     expected = xp.astype(expected, actual.dtype, device=actual.device)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
