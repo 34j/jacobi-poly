@@ -548,8 +548,10 @@ triplet = [
 ]
 
 [package.dev-dependencies]
-dev = [
+cuda = [
     { name = "numba-cuda", extra = ["cu13"] },
+]
+dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "torch" },
@@ -576,8 +578,8 @@ requires-dist = [
 provides-extras = ["triplet"]
 
 [package.metadata.requires-dev]
+cuda = [{ name = "numba-cuda", extras = ["cu13"], specifier = ">=0.19.0" }]
 dev = [
-    { name = "numba-cuda", extras = ["cu13"], specifier = ">=0.19.0" },
     { name = "pytest", specifier = ">=8,<9" },
     { name = "pytest-cov", specifier = ">=6,<7" },
     { name = "torch", specifier = ">=2.8.0" },

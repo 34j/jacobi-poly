@@ -4,11 +4,14 @@ from array_api._2024_12 import ArrayNamespaceFull
 from array_api_compat import to_device
 from scipy.special import eval_jacobi, roots_jacobi
 
-from jacobi_poly import jacobi_triplet_integral
-
 
 @pytest.mark.parametrize("alpha_eq_beta", [True, False])
 def test_jacobi_triplet_integral(alpha_eq_beta: bool, xp: ArrayNamespaceFull) -> None:
+    try:
+        from jacobi_poly import jacobi_triplet_integral
+    except ImportError:
+        pytest.skip("py3nj is not installed")
+
     n_samples = 20
     alphas = xp.random.integers(0, 5, shape=(3, n_samples))
     alphas[2, ...] = alphas[0, ...] + alphas[1, ...]

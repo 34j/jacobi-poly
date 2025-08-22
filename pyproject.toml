@@ -47,8 +47,10 @@ triplet = [
 ]
 
 [dependency-groups]
+cuda = [
+    "numba-cuda[cu13]>=0.19.0",
+]
 dev = [
-  "numba-cuda[cu13]>=0.19.0",
   "pytest>=8,<9",
   "pytest-cov>=6,<7",
   "torch>=2.8.0",
