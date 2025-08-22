@@ -30,6 +30,7 @@ def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> N
         + (None,) * len(shape)
     ]
     expected = eval_jacobi(n, alpha[None, ...], beta[None, ...], x[None, ...])
+    expected = xp.astype(expected, x.dtype, device=x.device)
     actual = jacobi(x, alpha=alpha, beta=beta, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
@@ -55,6 +56,7 @@ def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) 
         + (None,) * len(shape)
     ]
     expected = eval_gegenbauer(n, alpha[None, ...], x[None, ...])
+    expected = xp.astype(expected, x.dtype, device=x.device)
     actual = gegenbauer(x, alpha=alpha, n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
 
@@ -96,5 +98,6 @@ def test_legendre(
         )
     else:
         raise ValueError(f"Invalid type {type}")
+    expected = xp.astype(expected, x.dtype, device=x.device)
     actual = legendre(x, ndim=xp.asarray(d), n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))

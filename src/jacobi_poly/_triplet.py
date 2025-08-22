@@ -5,6 +5,10 @@ from array_api_compat import array_namespace
 from jacobi_poly._main import log_jacobi_normalization_constant
 
 
+def minus_1_power(x: Array, /) -> Array:
+    return 1 - 2 * (x % 2)
+
+
 def jacobi_triplet_integral(
     alpha1: Array,
     alpha2: Array,
@@ -108,8 +112,8 @@ def jacobi_triplet_integral(
         + 0.5 * xp.log(2 * ns[i, ...] + alphas[i, ...] + betas[i, ...] + 1)
         for i in range(3)
     ]
-    phase = (-1) ** (-Ls2[0] + Ls2[1] - betas[2, ...])
-    coef = phase / np.sqrt(2) * xp.exp(xp.sum(logcoefs, axis=0))
+    phase = minus_1_power(-Ls2[0] + Ls2[1] - betas[2, ...])
+    coef = phase / np.sqrt(2) * xp.exp(xp.sum(xp.stack(logcoefs), axis=0))
     return (
         coef
         * wigner3j(
