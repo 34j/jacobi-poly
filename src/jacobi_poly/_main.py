@@ -5,7 +5,6 @@ import numba
 import numpy as np
 from array_api._2024_12 import Array
 from array_api_compat import array_namespace
-from dlpack import asdlpack
 from numba import float32, float64
 from numba.cuda import as_cuda_array
 from numba.cuda.cudadrv.error import CudaSupportError
@@ -104,7 +103,7 @@ def jacobi_all(
         _jacobi_cuda(x, alpha, beta, out)
     else:
         _jacobi_parallel(x, alpha, beta, out)
-    out = xp.from_dlpack(asdlpack(out))
+    out = xp.asarray(out)
     return out
 
 
@@ -217,7 +216,7 @@ def legendre_all(x: Array, *, ndim: Array, n_end: int) -> Array:
     # return jacobi(x, alpha=xp.asarray((ndim-3)/2),
     # beta=xp.asarray((ndim-3)/2), n_end=n_end)
     xp = array_namespace(x, ndim)
-    x, ndim = xp.broadcast_arrays(x, ndim)
+    x, ndim = xp.broadcast_arrays(x, xp.asarray(ndim))
     n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
     return xp.where(
         ndim[..., None] == 2,

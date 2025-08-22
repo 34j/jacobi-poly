@@ -534,7 +534,6 @@ dependencies = [
     { name = "numba-cuda" },
     { name = "numpy", version = "2.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
-    { name = "pydlpack" },
     { name = "rich" },
     { name = "scipy", version = "1.13.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.10.*'" },
@@ -571,7 +570,6 @@ requires-dist = [
     { name = "numba-cuda", specifier = ">=0.19.0" },
     { name = "numpy", specifier = ">=2.0.2" },
     { name = "py3nj", marker = "extra == 'triplet'", specifier = ">=0.2.1" },
-    { name = "pydlpack", specifier = ">=0.2.1" },
     { name = "rich", specifier = ">=10" },
     { name = "scipy", specifier = ">=1.13.1" },
     { name = "typer", specifier = ">=0.15,<1" },
@@ -1244,15 +1242,6 @@ dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/79/39/608a0b4fa24bd07e42acfbe914eff4f32382e3861d81853d81f2c6d9fa7b/py3nj-0.2.1.tar.gz", hash = "sha256:3f9a79b3b18a51570c835c174a941f3cd3b552d1d3414debebeb70ce759512fe", size = 49969, upload-time = "2023-08-27T06:35:31.28Z" }
-
-[[package]]
-name = "pydlpack"
-version = "0.2.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/87/23/48c707f166468bf116740b2922b5ff745fdfd72bb40304a0358ce495d4b4/pydlpack-0.2.1.tar.gz", hash = "sha256:0b3b1b0dd2292fac72a020b8c191fdaf32be6f9471ec696c88f753fbc042c28f", size = 22156, upload-time = "2024-01-03T18:17:10.796Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/f8/ae765c0f3fac5f10119d51c9b82002ea709c1899190c4743e0b124e82149/pydlpack-0.2.1-py3-none-any.whl", hash = "sha256:b42ef189511e5ab4e1eafa42c5f0825d2b4349518020a3a9c33390890deb7cb2", size = 19422, upload-time = "2024-01-03T18:17:09.083Z" },
-]
 
 [[package]]
 name = "pygments"
