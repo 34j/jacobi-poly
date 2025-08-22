@@ -109,7 +109,7 @@ def log_jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) ->
     """
     xp = array_namespace(alpha, beta, n)
     logupper = xp.log(2 * n + alpha + beta + 1) + lgamma(n + alpha + beta + 1.0) + lgamma(n + 1.0)
-    loglower = xp.log(2) * (alpha + beta + 1) + lgamma(n + alpha + 1.0) + lgamma(n + beta + 1.0)
+    loglower = np.log(2) * (alpha + beta + 1) + lgamma(n + alpha + 1.0) + lgamma(n + beta + 1.0)
     return 0.5 * (logupper - loglower)
 
 
@@ -159,12 +159,13 @@ def gegenbauer(x: Array, *, alpha: Array, n_end: int) -> Array:
     """
     xp = array_namespace(x, alpha)
     x, alpha = xp.broadcast_arrays(x, alpha)
-    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
+    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(slice(None),) + (None,) * x.ndim]
     alpha = xp.asarray(alpha - 1 / 2, dtype=x.dtype, device=x.device)
+    alpha_ = alpha[None, ...]
     log_coef = xp.astype(
-        lgamma(2.0 * alpha[..., None] + 1.0 + n)
-        - lgamma(2.0 * alpha[..., None] + 1.0)
-        - (lgamma(alpha[..., None] + 1.0 + n) - lgamma(alpha[..., None] + 1.0)),
+        lgamma(2.0 * alpha_ + 1.0 + n)
+        - lgamma(2.0 * alpha_ + 1.0)
+        - (lgamma(alpha_ + 1.0 + n) - lgamma(alpha_ + 1.0)),
         x.dtype,
     )
     return xp.exp(log_coef) * jacobi(x, alpha=alpha, beta=alpha, n_end=n_end)
@@ -197,11 +198,11 @@ def legendre(x: Array, *, ndim: Array, n_end: int) -> Array:
     # beta=xp.asarray((ndim-3)/2), n_end=n_end)
     xp = array_namespace(x, ndim)
     x, ndim = xp.broadcast_arrays(x, ndim)
-    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
+    n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(slice(None),) + (None,) * x.ndim]
     return xp.where(
-        ndim[..., None] == 2,
+        ndim[None, ...] == 2,
         # Chebyshev polynomials of the first kind
-        xp.cos(n * xp.acos(x)[..., None]),
+        xp.cos(n * xp.acos(x)[None, ...]),
         gegenbauer(x, alpha=(ndim - 2) / 2, n_end=n_end)
-        / binom(n + ndim[..., None] - 3, ndim[..., None] - 3),
+        / binom(n + ndim[None, ...] - 3, ndim[None, ...] - 3),
     )
