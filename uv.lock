@@ -522,7 +522,7 @@ wheels = [
 
 [[package]]
 name = "jacobi-poly"
-version = "0.1.0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "array-api-compat", version = "1.11.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
