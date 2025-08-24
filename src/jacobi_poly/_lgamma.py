@@ -1,4 +1,5 @@
 from numbers import Number
+from typing import overload
 
 from array_api._2024_12 import Array
 from array_api_compat import (
@@ -9,7 +10,13 @@ from array_api_compat import (
 )
 
 
-def lgamma(x: Array) -> Array:
+@overload
+def lgamma(x: Array) -> Array: ...
+@overload
+def lgamma(x: float) -> float: ...  # type: ignore
+
+
+def lgamma(x: Array | float) -> Array | float:
     """
     Compute the logarithm of the absolute value of the gamma function.
 
@@ -53,7 +60,13 @@ def lgamma(x: Array) -> Array:
             )
 
 
-def binom(x: Array, y: Array) -> Array:
+@overload
+def binom(x: Array, y: Array) -> Array: ...
+@overload
+def binom(x: float, y: float) -> float: ...  # type: ignore
+
+
+def binom(x: Array | float, y: Array | float) -> Array | float:
     """
     Compute the binomial coefficient.
 
@@ -70,5 +83,11 @@ def binom(x: Array, y: Array) -> Array:
         The binomial coefficient.
 
     """
+    inner = lgamma(x + 1.0) - lgamma(y + 1.0) - lgamma(x - y + 1.0)
+
+    if isinstance(inner, Number):
+        from math import exp
+
+        return exp(inner)  # type: ignore
     xp = array_namespace(x, y)
-    return xp.exp(lgamma(x + 1.0) - lgamma(y + 1.0) - lgamma(x - y + 1.0))
+    return xp.exp(inner)
