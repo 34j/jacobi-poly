@@ -4,7 +4,7 @@ requires = [ "setuptools" ]
 
 [project]
 name = "jacobi-poly"
-version = "1.0.0"
+version = "1.0.1-rc.1"
 description = "Compute Jacobi polynomial from order 0 to N efficiently in NumPy / PyTorch / JAX / array API"
 readme = "README.md"
 license = { text = "MIT" }

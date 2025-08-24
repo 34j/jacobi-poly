@@ -1,4 +1,4 @@
-__version__ = "1.0.0"
+__version__ = "1.0.1-rc.1"
 from ._lgamma import binom, lgamma
 from ._main import (
     gegenbauer_all,
