@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.1 (2025-08-24)
+
+### Bug fixes
+
+- Fix binom, add more tests ([`e6646c3`](https://github.com/34j/jacobi-poly/commit/e6646c30de9b6f21bf29ecbae1118683a35f9cc5))
+
 ## v1.0.0 (2025-08-23)
 
 ## v0.1.0 (2025-08-23)
