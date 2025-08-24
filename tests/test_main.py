@@ -17,7 +17,7 @@ from jacobi_poly import binom, gegenbauer_all, jacobi_all, legendre_all
         (3, 3, 4),
     ],
 )
-@pytest.mark.parametrize("n_end", [8])
+@pytest.mark.parametrize("n_end", [0, 1, 2, 8])
 def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> None:
     alpha = xp.random.random_uniform(low=0, high=5, shape=shape)
     beta = xp.random.random_uniform(low=0, high=5, shape=shape)
@@ -44,7 +44,7 @@ def test_jacobi(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> N
         (3, 3, 4),
     ],
 )
-@pytest.mark.parametrize("n_end", [8])
+@pytest.mark.parametrize("n_end", [0, 1, 2, 8])
 def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) -> None:
     alpha = xp.random.random_uniform(low=0, high=5, shape=shape)
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
@@ -65,7 +65,7 @@ def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) 
         (3, 3, 4),
     ],
 )
-@pytest.mark.parametrize("n_end", [8])
+@pytest.mark.parametrize("n_end", [0, 1, 2, 8])
 @pytest.mark.parametrize("type", ["gegenbauer", "jacobi"])
 def test_legendre(
     shape: tuple[int, ...],
