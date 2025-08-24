@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.3-rc.1 (2025-08-24)
+
+### Bug fixes
+
+- Fix returning wrong values if n_end is small ([`54dcb5a`](https://github.com/34j/jacobi-poly/commit/54dcb5ac8037c623b2f4447e2ce990441bf9a9a8))
+
 ## v1.0.2 (2025-08-24)
 
 ### Bug fixes
