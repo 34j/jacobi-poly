@@ -31,22 +31,18 @@ def lgamma(x: Array | float) -> Array | float:
         The logarithm of the absolute value of the gamma function.
 
     """
-    if isinstance(x, Number):
-        from math import lgamma as lgamma_math
-
-        return lgamma_math(x)  # type: ignore
-    elif is_jax_array(x):
+    if is_jax_array(x):
         from jax.lax import lgamma as lgamma_jax
 
         return lgamma_jax(x)
-    elif is_numpy_array(x):
-        from scipy.special import gammaln as lgamma_scipy
-
-        return lgamma_scipy(x)
     elif is_torch_array(x):
         from torch import lgamma as lgamma_torch
 
         return lgamma_torch(x)
+    elif is_numpy_array(x) or isinstance(x, Number):
+        from scipy.special import gammaln as lgamma_scipy
+
+        return lgamma_scipy(x)
     else:
         xp = array_namespace(x)
         if hasattr(xp, "lgamma"):
@@ -84,10 +80,5 @@ def binom(x: Array | float, y: Array | float) -> Array | float:
 
     """
     inner = lgamma(x + 1.0) - lgamma(y + 1.0) - lgamma(x - y + 1.0)
-
-    if isinstance(inner, Number):
-        from math import exp
-
-        return exp(inner)  # type: ignore
-    xp = array_namespace(x, y)
+    xp = array_namespace(x, y, inner)
     return xp.exp(inner)
