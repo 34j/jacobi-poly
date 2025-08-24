@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.2 (2025-08-24)
+
+### Bug fixes
+
+- Fix binom again ([`69a8c8a`](https://github.com/34j/jacobi-poly/commit/69a8c8afb35c672df86c98562dac9e893d4df797))
+
 ## v1.0.1 (2025-08-24)
 
 ### Bug fixes
