@@ -23,9 +23,9 @@ def _jacobi(
     # Compute the first two polynomials
     # https://en.wikipedia.org/wiki/Jacobi_polynomials#Special_cases
     n_end = out.shape[0]
-    if n_end >= 0:
+    if n_end > 0:
         out[0] = 1.0
-    if n_end >= 1:
+    if n_end > 1:
         out[1] = (alpha + 1) + (alpha + beta + 2) * (x - 1) / 2
 
     # Use recurrence relation to compute the rest
