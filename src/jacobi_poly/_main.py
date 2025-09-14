@@ -100,7 +100,8 @@ def jacobi_all(
     """
     xp = array_namespace(x, alpha, beta)
     shape = xpx.broadcast_shapes(x.shape, alpha.shape, beta.shape)
-    out = xp.empty((*shape, n_end), dtype=x.dtype, device=x.device)
+    dtype = xp.result_type(x, alpha, beta)
+    out = xp.empty((*shape, n_end), dtype=dtype, device=x.device)
     if "cuda" in str(x.device):
         x = as_cuda_array(x)
         alpha = as_cuda_array(alpha)
