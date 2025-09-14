@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.4 (2025-09-14)
+
+### Bug fixes
+
+- Use result_dtype() ([`5d6e568`](https://github.com/34j/jacobi-poly/commit/5d6e568e56fd6c2ef568b640d6b0c8c043145193))
+
 ## v1.0.3 (2025-08-24)
 
 ### Bug fixes
