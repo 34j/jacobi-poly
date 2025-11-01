@@ -1,6 +1,5 @@
 from typing import Any
 
-import array_api_extra as xpx
 import numba
 import numpy as np
 from array_api._2024_12 import Array
@@ -99,9 +98,11 @@ def jacobi_all(
 
     """
     xp = array_namespace(x, alpha, beta)
-    shape = xpx.broadcast_shapes(x.shape, alpha.shape, beta.shape)
+    x, alpha, beta = xp.broadcast_arrays(x, alpha, beta)
+    shape = x.shape
+    x, alpha, beta = xp.reshape(x, (-1,)), xp.reshape(alpha, (-1,)), xp.reshape(beta, (-1,))
     dtype = xp.result_type(x, alpha, beta)
-    out = xp.empty((*shape, n_end), dtype=dtype, device=x.device)
+    out = xp.empty((*x.shape, n_end), dtype=dtype, device=x.device)
     if "cuda" in str(x.device):
         x = as_cuda_array(x)
         alpha = as_cuda_array(alpha)
@@ -111,6 +112,7 @@ def jacobi_all(
     else:
         _jacobi_parallel(x, alpha, beta, out)
     out = xp.asarray(out)
+    out = xp.reshape(out, (*shape, n_end))
     return out
 
 
