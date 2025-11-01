@@ -2,7 +2,7 @@
   description = "A flake providing a dev shell for Numba with CUDA without installing Numba via nix. Also supports PyTorch yet being minimal for Numba with CUDA.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   };
 
   outputs =
@@ -36,6 +36,18 @@
               "/run/opengl-driver" # Needed to find libGL.so, required by both PyTorch and Numba
             ]
           }:$LD_LIBRARY_PATH
+
+          export LIBRARY_PATH=${
+            pkgs.lib.makeLibraryPath [
+              pkgs.graphviz
+            ]
+          }:$LIBRARY_PATH
+
+          export C_INCLUDE_PATH=${
+            pkgs.lib.makeIncludePath [
+              pkgs.graphviz
+            ]
+          }:$C_INCLUDE_PATH
         '';
       };
     };
