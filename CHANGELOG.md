@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.5-rc.1 (2025-11-01)
+
+### Bug fixes
+
+- Fix jacobi_poly not working for dim > 2 ([`a48d871`](https://github.com/34j/jacobi-poly/commit/a48d871e875caceca4a00c84e725db6c4b549b44))
+
 ## v1.0.4 (2025-09-14)
 
 ### Bug fixes
