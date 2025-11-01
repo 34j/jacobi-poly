@@ -13,8 +13,9 @@ from jacobi_poly import binom, gegenbauer_all, jacobi_all, legendre_all
     "shape",
     [
         (1,),
+        (10,),
         (2, 3),
-        (3, 3, 4),
+        (3, 4, 4),
     ],
 )
 @pytest.mark.parametrize("n_end", [0, 1, 2, 8])
