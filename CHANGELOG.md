@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.6 (2026-01-04)
+
+### Bug fixes
+
+- Upgrade deps ([`a7fad9a`](https://github.com/34j/jacobi-poly/commit/a7fad9a617396f1980ee61146b9d8607e875e895))
+
 ## v1.0.5 (2025-11-01)
 
 ### Bug fixes
