@@ -1,4 +1,6 @@
-# Welcome to Jacobi Poly documentation!
+```{include} ../README.md
+
+```
 
 ```{toctree}
 :caption: Installation & Usage
@@ -21,8 +23,4 @@ contributing
 :maxdepth: 2
 
 jacobi_poly
-```
-
-```{include} ../README.md
-
 ```

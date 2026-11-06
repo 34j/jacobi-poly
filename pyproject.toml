@@ -1,13 +1,13 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = [ "setuptools" ]
+requires = [ "setuptools>=77.0.3" ]
 
 [project]
 name = "jacobi-poly"
 version = "1.0.6"
 description = "Compute Jacobi polynomial from order 0 to N efficiently in NumPy / PyTorch / JAX / array API"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [
   { name = "34j", email = "34j.95a2p@simplelogin.com" },
 ]
@@ -17,23 +17,24 @@ classifiers = [
   "Intended Audience :: Developers",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Libraries",
 ]
-
 dependencies = [
-  "array-api-compat>=1.13.0",
+  "array-api-compat>=1.13",
   "array-api-extra>=0.9.2",
-  "numba>=0.63.0",
+  "numba>=0.63",
   "numpy>=2.3.5",
-  "rich>=14.2.0",
+  "rich>=14.2",
   "scipy>=1.16.3",
-  "typer>=0.21.0",
-  "types-array-api>=1.2.0",
+  "typer>=0.21",
+  "types-array-api>=1.2",
+]
+optional-dependencies.triplet = [
+  "py3nj>=0.2.1",
 ]
 urls."Bug Tracker" = "https://github.com/34j/jacobi-poly/issues"
 urls.Changelog = "https://github.com/34j/jacobi-poly/blob/main/CHANGELOG.md"
@@ -41,52 +42,45 @@ urls.documentation = "https://jacobi-poly.readthedocs.io"
 urls.repository = "https://github.com/34j/jacobi-poly"
 scripts.jacobi-poly = "jacobi_poly.cli:app"
 
-[project.optional-dependencies]
-triplet = [
-    "py3nj>=0.2.1",
-]
-
 [dependency-groups]
-cuda = [
-    "numba-cuda[cu13]>=0.19.0",
-]
 dev = [
-  "pytest>=9,<10",
-  "pytest-cov>=7,<8",
-  "torch>=2.8.0",
+  "coverage",
+  "packaging-34j[test]",
+  "pytest",
+  "torch>=2.8",
+  "ty",
 ]
 docs = [
-  "furo>=2023.5.20; python_version>='3.11'",
-  "myst-parser>=0.16; python_version>='3.11'",
-  "sphinx>=4; python_version>='3.11'",
-  "sphinx-autobuild>=2025,<2026; python_version>='3.11'",
+  "packaging-34j[docs]",
+]
+cuda = [
+  "numba-cuda[cu13]>=0.19",
 ]
 
 [tool.ruff]
 line-length = 100
 lint.select = [
   "B",   # flake8-bugbear
-  "D",   # flake8-docstrings
   "C4",  # flake8-comprehensions
-  "S",   # flake8-bandit
-  "F",   # pyflake
+  "D",   # flake8-docstrings
   "E",   # pycodestyle
-  "W",   # pycodestyle
-  "UP",  # pyupgrade
+  "F",   # pyflake
   "I",   # isort
   "RUF", # ruff specific
+  "S",   # flake8-bandit
+  "UP",  # pyupgrade
+  "W",   # pycodestyle
 ]
 lint.ignore = [
-  "D203", # 1 blank line required before class docstring
-  "D212", # Multi-line docstring summary should start at the first line
   "D100", # Missing docstring in public module
   "D104", # Missing docstring in public package
   "D107", # Missing docstring in `__init__`
+  "D203", # 1 blank line required before class docstring
+  "D212", # Multi-line docstring summary should start at the first line
   "D401", # First line of docstring should be in imperative mood
 ]
 lint.per-file-ignores."conftest.py" = [ "D100" ]
 lint.per-file-ignores."docs/conf.py" = [ "D100" ]
-lint.per-file-ignores."setup.py" = [ "D100" ]
 lint.per-file-ignores."tests/**/*" = [
   "D100",
   "D101",
@@ -97,82 +91,63 @@ lint.per-file-ignores."tests/**/*" = [
 ]
 lint.isort.known-first-party = [ "jacobi_poly", "tests" ]
 
-[tool.pytest.ini_options]
-addopts = """\
-    -v
-    -Wdefault
-    --cov=jacobi_poly
-    --cov-report=term
-    --cov-report=xml
-    """
+[tool.pyproject-fmt]
+max_supported_python = "3.14"
+
+[tool.ty]
+src.exclude = [ "docs/" ]
+terminal.error-on-warning = true
+
+[tool.pytest]
+addopts = [
+  "-v",
+  "-Wonce",
+  "-p no:doctest",
+  "--cov=jacobi_poly",
+  "--cov-report=term",
+  "--cov-report=xml",
+]
+minversion = "9.0"
 pythonpath = [ "src" ]
 
-[tool.coverage.run]
-branch = true
-
-[tool.coverage.report]
-exclude_lines = [
-  "pragma: no cover",
+[tool.coverage]
+run.branch = true
+paths.source = [
+  "src",
+  ".tox/**/site-packages",
+]
+report.exclude_lines = [
   "@overload",
-  "if TYPE_CHECKING",
-  "raise NotImplementedError",
   'if __name__ == "__main__":',
+  "if TYPE_CHECKING",
+  "pragma: no cover",
+  "raise NotImplementedError",
 ]
-
-[tool.mypy]
-check_untyped_defs = true
-disallow_any_generics = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
-mypy_path = "src/"
-no_implicit_optional = true
-show_error_codes = true
-warn_unreachable = true
-warn_unused_ignores = true
-exclude = [
-  'docs/.*',
-  'setup.py',
-]
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-allow_untyped_defs = true
-
-[[tool.mypy.overrides]]
-module = "docs.*"
-ignore_errors = true
 
 [tool.semantic_release]
-version_toml = [ "pyproject.toml:project.version" ]
+allow_zero_version = true
 version_variables = [
-  "src/jacobi_poly/__init__.py:__version__",
   "docs/conf.py:release",
+  "src/jacobi_poly/__init__.py:__version__",
 ]
+version_toml = [ "pyproject.toml:project.version" ]
 build_command = """
 pip install uv
 uv lock
 git add uv.lock
 uv build
 """
-
-[tool.semantic_release.changelog]
-exclude_commit_patterns = [
-  '''chore(?:\([^)]*?\))?: .+''',
-  '''ci(?:\([^)]*?\))?: .+''',
-  '''refactor(?:\([^)]*?\))?: .+''',
-  '''style(?:\([^)]*?\))?: .+''',
-  '''test(?:\([^)]*?\))?: .+''',
-  '''build\((?!deps\): .+)''',
-  '''Merged? .*''',
-  '''Initial [Cc]ommit.*''', # codespell:ignore
+branches.main.match = "main"
+branches.noop.match = "(?!main$)"
+branches.noop.prerelease = true
+changelog.environment.keep_trailing_newline = true
+changelog.exclude_commit_patterns = [
+  "chore(?:\\([^)]*?\\))?: .+",
+  "ci(?:\\([^)]*?\\))?: .+",
+  "refactor(?:\\([^)]*?\\))?: .+",
+  "style(?:\\([^)]*?\\))?: .+",
+  "test(?:\\([^)]*?\\))?: .+",
+  "build\\((?!deps\\): .+)",
+  "Merged? .*",
+  "Initial [Cc]ommit.*",         # codespell:ignore
 ]
-
-[tool.semantic_release.changelog.environment]
-keep_trailing_newline = true
-
-[tool.semantic_release.branches.main]
-match = "main"
-
-[tool.semantic_release.branches.noop]
-match = "(?!main$)"
-prerelease = true
