@@ -1,4 +1,4 @@
-import subprocess
+import subprocess  # ruff:ignore[suspicious-subprocess-import]
 import sys
 
 

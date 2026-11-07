@@ -13,7 +13,7 @@ from array_api_compat import (
 @overload
 def lgamma(x: Array) -> Array: ...
 @overload
-def lgamma(x: float) -> float: ...  # type: ignore
+def lgamma(x: float) -> float: ...  # type: ignore[overload-overlap]
 
 
 def lgamma(x: Array | float) -> Array | float:
@@ -30,17 +30,22 @@ def lgamma(x: Array | float) -> Array | float:
     Array
         The logarithm of the absolute value of the gamma function.
 
+    Raises
+    ------
+    ValueError
+        If the input array does not provide a supported gamma function.
+
     """
     if is_jax_array(x):
-        from jax.lax import lgamma as lgamma_jax
+        from jax.lax import lgamma as lgamma_jax  # ruff:ignore[import-outside-top-level]
 
         return lgamma_jax(x)
     if is_torch_array(x):
-        from torch import lgamma as lgamma_torch
+        from torch import lgamma as lgamma_torch  # ruff:ignore[import-outside-top-level]
 
         return lgamma_torch(x)
     if is_numpy_array(x) or isinstance(x, Number):
-        from scipy.special import gammaln as lgamma_scipy
+        from scipy.special import gammaln as lgamma_scipy  # ruff:ignore[import-outside-top-level]
 
         return lgamma_scipy(x)
     xp = array_namespace(x)
@@ -57,7 +62,7 @@ def lgamma(x: Array | float) -> Array | float:
 @overload
 def binom(x: Array, y: Array) -> Array: ...
 @overload
-def binom(x: float, y: float) -> float: ...  # type: ignore
+def binom(x: float, y: float) -> float: ...  # type: ignore[overload-overlap]
 
 
 def binom(x: Array | float, y: Array | float) -> Array | float:

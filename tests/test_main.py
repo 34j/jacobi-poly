@@ -67,29 +67,29 @@ def test_gegenbauer(shape: tuple[int, ...], n_end: int, xp: ArrayNamespaceFull) 
     ],
 )
 @pytest.mark.parametrize("n_end", [0, 1, 2, 8])
-@pytest.mark.parametrize("type", ["gegenbauer", "jacobi"])
+@pytest.mark.parametrize("polynomial_type", ["gegenbauer", "jacobi"])
 def test_legendre(
     shape: tuple[int, ...],
     n_end: int,
-    type: Literal["gegenbauer", "jacobi"],
+    polynomial_type: Literal["gegenbauer", "jacobi"],
     xp: ArrayNamespaceFull,
 ) -> None:
     d = xp.random.integers(3, 8, shape=shape)
     alpha = (d - 3) / 2
     x = xp.random.random_uniform(low=0, high=1, shape=shape)
     n = xp.arange(n_end)[(None,) * x.ndim + (slice(None),)]
-    if type == "jacobi":
+    if polynomial_type == "jacobi":
         expected = jacobi_all(x, alpha=alpha, beta=alpha, n_end=n_end) / binom(
             n + alpha[..., None], n
         )
-    elif type == "gegenbauer":
+    elif polynomial_type == "gegenbauer":
         expected = gegenbauer_all(x, alpha=alpha + 1 / 2, n_end=n_end) / binom(
             n + 2 * alpha[..., None],
             n,
             # n + d[..., None] - 3, d[..., None] - 3
         )
     else:
-        raise ValueError(f"Invalid type {type}")
+        raise ValueError(f"Invalid type {polynomial_type}")
     expected = xp.astype(expected, x.dtype, device=x.device)
     actual = legendre_all(x, ndim=xp.asarray(d), n_end=n_end)
     assert xp.all(xpx.isclose(expected, actual, rtol=1e-3, atol=1e-3))
