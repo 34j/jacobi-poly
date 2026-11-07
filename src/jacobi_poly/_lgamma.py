@@ -35,25 +35,23 @@ def lgamma(x: Array | float) -> Array | float:
         from jax.lax import lgamma as lgamma_jax
 
         return lgamma_jax(x)
-    elif is_torch_array(x):
+    if is_torch_array(x):
         from torch import lgamma as lgamma_torch
 
         return lgamma_torch(x)
-    elif is_numpy_array(x) or isinstance(x, Number):
+    if is_numpy_array(x) or isinstance(x, Number):
         from scipy.special import gammaln as lgamma_scipy
 
         return lgamma_scipy(x)
-    else:
-        xp = array_namespace(x)
-        if hasattr(xp, "lgamma"):
-            return xp.lgamma(x)
-        elif hasattr(xp, "gammaln"):
-            return xp.gammaln(x)
-        else:
-            raise ValueError(
-                "The input array must be a JAX, NumPy, or PyTorch array, "
-                "or an array with a lgamma or gammaln method."
-            )
+    xp = array_namespace(x)
+    if hasattr(xp, "lgamma"):
+        return xp.lgamma(x)
+    if hasattr(xp, "gammaln"):
+        return xp.gammaln(x)
+    raise ValueError(
+        "The input array must be a JAX, NumPy, or PyTorch array, "
+        "or an array with a lgamma or gammaln method."
+    )
 
 
 @overload
