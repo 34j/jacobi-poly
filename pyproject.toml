@@ -34,7 +34,7 @@ dependencies = [
   "types-array-api>=1.2",
 ]
 optional-dependencies.triplet = [
-  "py3nj>=0.2.1",
+  "py3nj>=0.2.1; sys_platform!='darwin'",
 ]
 urls."Bug Tracker" = "https://github.com/34j/jacobi-poly/issues"
 urls.Changelog = "https://github.com/34j/jacobi-poly/blob/main/CHANGELOG.md"
