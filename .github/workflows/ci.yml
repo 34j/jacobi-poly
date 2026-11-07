@@ -13,6 +13,8 @@ concurrency:
 jobs:
   ci:
     uses: 34j/.github/.github/workflows/python-package-ci.yml@main
+    with:
+      sync_command: uv sync --frozen
     permissions:
       attestations: write
       contents: write
