@@ -1,7 +1,7 @@
 import array_api_extra as xpx
 import numpy as np
+import pytest
 from array_api._2024_12 import ArrayNamespaceFull
-from pytest import approx
 
 from jacobi_poly import binom, lgamma
 
@@ -9,9 +9,9 @@ from jacobi_poly import binom, lgamma
 def test_lgamma_python() -> None:
     assert lgamma(1) == 0
     assert lgamma(2) == 0
-    assert lgamma(3) == approx(np.log(2))
-    assert lgamma(4) == approx(np.log(6))
-    assert lgamma(5) == approx(np.log(24))
+    assert lgamma(3) == pytest.approx(np.log(2))
+    assert lgamma(4) == pytest.approx(np.log(6))
+    assert lgamma(5) == pytest.approx(np.log(24))
 
 
 def test_lgamma(xp: ArrayNamespaceFull) -> None:
@@ -21,10 +21,10 @@ def test_lgamma(xp: ArrayNamespaceFull) -> None:
 
 
 def test_binom_python() -> None:
-    assert binom(5, 2) == approx(10)
-    assert binom(5, 0) == approx(1)
-    assert binom(5, 5) == approx(1)
-    assert binom(6, 3) == approx(20)
+    assert binom(5, 2) == pytest.approx(10)
+    assert binom(5, 0) == pytest.approx(1)
+    assert binom(5, 5) == pytest.approx(1)
+    assert binom(6, 3) == pytest.approx(20)
 
 
 def test_binom(xp: ArrayNamespaceFull) -> None:

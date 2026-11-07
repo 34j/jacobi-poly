@@ -10,6 +10,8 @@ from numba.cuda.cudadrv.error import CudaSupportError
 
 from ._lgamma import binom, lgamma
 
+_CHEBYSHEV_DIMENSION = 2
+
 
 def _jacobi(
     x: Any,
@@ -76,7 +78,7 @@ def jacobi_all(
     n_end: int,
 ) -> Array:
     """
-    Computes the Jacobi polynomials of order {0, ..., n_end - 1} at the points x.
+    Compute the Jacobi polynomials of order {0, ..., n_end - 1} at the points x.
 
     (...) -> (..., n_end)
 
@@ -112,13 +114,12 @@ def jacobi_all(
     else:
         _jacobi_parallel(x, alpha, beta, out)
     out = xp.asarray(out)
-    out = xp.reshape(out, (*shape, n_end))
-    return out
+    return xp.reshape(out, (*shape, n_end))
 
 
 def log_jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) -> Array:
     """
-    Computes the log of normalization constant of the Jacobi polynomials of order n.
+    Compute the log of normalization constant of the Jacobi polynomials of order n.
 
     Parameters
     ----------
@@ -143,7 +144,7 @@ def log_jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) ->
 
 def jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) -> Array:
     """
-    Computes the normalization constant of the Jacobi polynomials of order n.
+    Compute the normalization constant of the Jacobi polynomials of order n.
 
     Parameters
     ----------
@@ -166,7 +167,7 @@ def jacobi_normalization_constant(*, alpha: Array, beta: Array, n: Array) -> Arr
 
 def gegenbauer_all(x: Array, *, alpha: Array, n_end: int) -> Array:
     """
-    Computes the Gegenbauer polynomials of order {0, ..., n_end - 1} at the points x.
+    Compute the Gegenbauer polynomials of order {0, ..., n_end - 1} at the points x.
 
     (...) -> (..., n_end)
 
@@ -201,7 +202,7 @@ def gegenbauer_all(x: Array, *, alpha: Array, n_end: int) -> Array:
 
 def legendre_all(x: Array, *, ndim: Array, n_end: int) -> Array:
     """
-    Computes the generalized Legendre polynomials of order {0, ..., n_end - 1} at the points x.
+    Compute the generalized Legendre polynomials of order {0, ..., n_end - 1} at the points x.
 
     The shape of x should be broadcastable to a common shape.
 
@@ -228,7 +229,7 @@ def legendre_all(x: Array, *, ndim: Array, n_end: int) -> Array:
     x, ndim = xp.broadcast_arrays(x, xp.asarray(ndim))
     n = xp.arange(0, n_end, dtype=x.dtype, device=x.device)[(None,) * x.ndim + (slice(None),)]
     return xp.where(
-        ndim[..., None] == 2,
+        ndim[..., None] == _CHEBYSHEV_DIMENSION,
         # Chebyshev polynomials of the first kind
         xp.cos(n * xp.acos(x)[..., None]),
         gegenbauer_all(x, alpha=(ndim - 2) / 2, n_end=n_end)

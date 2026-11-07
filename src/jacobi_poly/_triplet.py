@@ -72,7 +72,7 @@ def jacobi_triplet_integral(
 
     """
     xp = array_namespace(alpha1, alpha2, alpha3, beta1, beta2, beta3, n1, n2, n3)
-    from py3nj import wigner3j
+    from py3nj import wigner3j  # ruff:ignore[import-outside-top-level]
 
     if alpha3 is None:
         alpha3 = alpha1 + alpha2
@@ -89,15 +89,15 @@ def jacobi_triplet_integral(
     del alpha1, alpha2, alpha3, beta1, beta2, beta3, n1, n2, n3
 
     # wigner arguments
-    Ls2 = 2 * ns + alphas + betas
-    Ms2 = alphas + betas
-    Ns2 = betas - alphas
-    # check if Ls2, Ms2, Ns2 are integers
-    if xp.any(Ls2 != xp.round(Ls2)) or xp.any(Ms2 != xp.round(Ms2)) or xp.any(Ns2 != xp.round(Ns2)):
-        raise ValueError(f"The sum of the orders should be an integer. {Ls2=}, {Ms2=}, {Ns2=}")
+    ls2 = 2 * ns + alphas + betas
+    ms2 = alphas + betas
+    ns2 = betas - alphas
+    # check if ls2, ms2, ns2 are integers
+    if xp.any(ls2 != xp.round(ls2)) or xp.any(ms2 != xp.round(ms2)) or xp.any(ns2 != xp.round(ns2)):
+        raise ValueError(f"The sum of the orders should be an integer. {ls2=}, {ms2=}, {ns2=}")
     # round and cast to int
-    Ls2, Ms2, Ns2 = xp.round(Ls2), xp.round(Ms2), xp.round(Ns2)
-    Ls2, Ms2, Ns2 = xp.astype(Ls2, int), xp.astype(Ms2, int), xp.astype(Ns2, int)
+    ls2, ms2, ns2 = xp.round(ls2), xp.round(ms2), xp.round(ns2)
+    ls2, ms2, ns2 = xp.astype(ls2, int), xp.astype(ms2, int), xp.astype(ns2, int)
 
     # coefficients
     # note that there is no need to sqrt the normalization constant
@@ -112,25 +112,25 @@ def jacobi_triplet_integral(
         + 0.5 * xp.log(2 * ns[i, ...] + alphas[i, ...] + betas[i, ...] + 1)
         for i in range(3)
     ]
-    phase = minus_1_power(-Ls2[0] + Ls2[1] - betas[2, ...])
+    phase = minus_1_power(-ls2[0] + ls2[1] - betas[2, ...])
     coef = phase / np.sqrt(2) * xp.exp(xp.sum(xp.stack(logcoefs), axis=0))
     return coef * xp.asarray(
         wigner3j(
-            Ls2[0, ...],
-            Ls2[1, ...],
-            Ls2[2, ...],
-            Ms2[0, ...],
-            Ms2[1, ...],
-            -Ms2[2, ...],
+            ls2[0, ...],
+            ls2[1, ...],
+            ls2[2, ...],
+            ms2[0, ...],
+            ms2[1, ...],
+            -ms2[2, ...],
             ignore_invalid=True,
         )
         * wigner3j(
-            Ls2[0, ...],
-            Ls2[1, ...],
-            Ls2[2, ...],
-            Ns2[0, ...],
-            Ns2[1, ...],
-            -Ns2[2, ...],
+            ls2[0, ...],
+            ls2[1, ...],
+            ls2[2, ...],
+            ns2[0, ...],
+            ns2[1, ...],
+            -ns2[2, ...],
             ignore_invalid=True,
         ),
         device=coef.device,
