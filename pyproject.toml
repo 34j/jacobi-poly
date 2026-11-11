@@ -29,7 +29,7 @@ dependencies = [
   "numba>=0.63",
   "numpy>=2.3.5",
   "rich>=14.2",
-  "scipy>=1.16.3",
+  "scipy>=1.18.1",
   "typer>=0.21",
   "types-array-api>=1.2",
 ]
