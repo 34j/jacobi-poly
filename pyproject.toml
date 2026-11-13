@@ -54,7 +54,7 @@ docs = [
   "packaging-34j[docs]",
 ]
 cuda = [
-  "numba-cuda[cu13]>=0.19",
+  "numba-cuda[cu13]>=0.30.4",
 ]
 
 [tool.ruff]
