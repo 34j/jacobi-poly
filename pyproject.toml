@@ -47,7 +47,7 @@ dev = [
   "coverage",
   "packaging-34j[test]",
   "pytest",
-  "torch>=2.8",
+  "torch>=2.15.0",
   "ty",
 ]
 docs = [
